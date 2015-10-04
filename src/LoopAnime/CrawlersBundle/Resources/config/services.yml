@@ -1,8 +1,0 @@
-services:
-    loopanime.crawler:
-        class: LoopAnime\CrawlersBundle\Services\crawlers\CrawlerService
-        arguments: ["@doctrine.orm.entity_manager"]
-    loopanime.hosters.anime44:
-        class: LoopAnime\CrawlersBundle\Services\hosters\Anime44
-    loopanime.hosters.anitube:
-        class: LoopAnime\CrawlersBundle\Services\hosters\Anitube

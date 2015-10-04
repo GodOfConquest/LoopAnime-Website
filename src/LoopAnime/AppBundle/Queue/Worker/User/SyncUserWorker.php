@@ -22,18 +22,18 @@ class SyncUserWorker extends BaseWorker implements WorkerInterface
         /** @var Users $user */
         $user = $userRepo->find($userId);
         if (!$user) {
-            throw new SubjectNotFoundException('User '.$userId.' is not valid or was not found!');
+            throw new SubjectNotFoundException('User ' . $userId . ' is not valid or was not found!');
         }
 
         /** @var SyncService $syncService */
         $syncService = $this->getContainer()->get('sync.service');
 
         if (!empty($user->getTraktAccessToken()) && (empty($network) || $network === SyncEnum::SYNC_TRAKT)) {
-            $this->log('Importing User '.$user->getId().' Trakt\'s Account','comment');
+            $this->log('Importing User ' . $user->getId() . ' Trakt\'s Account', 'comment');
             $syncService->importSeenEpisodes($user, SyncEnum::SYNC_TRAKT);
         }
         if (!empty($user->getMALUsername()) && (empty($network) || $network === SyncEnum::SYNC_MAL)) {
-            $this->log('Importing User '.$user->getId().' MAL\'s Account','comment');
+            $this->log('Importing User ' . $user->getId() . ' MAL\'s Account', 'comment');
             $syncService->importSeenEpisodes($user, SyncEnum::SYNC_MAL);
         }
 

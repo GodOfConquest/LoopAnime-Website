@@ -19,8 +19,8 @@ class UpdateAnimeCommand extends ContainerAwareCommand {
         $this
             ->setName('loopanime:admin:import:update-animes')
             ->setDescription('Updates Animes on the database')
-            ->addOption('all','a',InputOption::VALUE_NONE,'Updates all Animes , including the ones that have already finish')
-            ->addOption('anime','i',InputOption::VALUE_REQUIRED,'Updates a specific Anime - Provide the ID of the database');
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Updates all Animes , including the ones that have already finish')
+            ->addOption('anime', 'i', InputOption::VALUE_REQUIRED, 'Updates a specific Anime - Provide the ID of the database');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -29,10 +29,10 @@ class UpdateAnimeCommand extends ContainerAwareCommand {
         $anime = $input->getOption('anime');
         $this->output = $output;
 
-        if($isAll) {
+        if ($isAll) {
             $this->output->writeln('<question>Updating All Animes!</question>');
         }
-        if($anime) {
+        if ($anime) {
             $this->output->writeln('<question>Updating only the anime with the ID: ' . $anime . '</question>');
         }
 
@@ -40,14 +40,14 @@ class UpdateAnimeCommand extends ContainerAwareCommand {
         /** @var AnimesAPI[] $animes */
         $animes = $doctrine->getRepository('LoopAnimeShowsAPIBundle:AnimesAPI')->getAnimesToUpdate($isAll, $anime);
 
-        foreach($animes as $anime) {
-            $this->output->writeln('<error>Failed to update the anime '.$anime->getApiAnimeKey().'</error>');
+        foreach ($animes as $anime) {
+            $this->output->writeln('<error>Failed to update the anime ' . $anime->getApiAnimeKey() . '</error>');
             $command = $this->getApplication()->find('loopanime:admin:import:add-anime');
             $arguments = ['--tvdbId' => $anime->getApiAnimeKey()];
             $input = new ArrayInput($arguments);
             $returnCode = $command->run($input, $output);
-            if($returnCode !== 0) {
-                $this->output->writeln('<error>Failed to update the anime '.$anime->getApiAnimeKey().'</error>');
+            if ($returnCode !== 0) {
+                $this->output->writeln('<error>Failed to update the anime ' . $anime->getApiAnimeKey() . '</error>');
             }
         }
         $this->output->writeln('<info>All Animes were Updated!</info>');

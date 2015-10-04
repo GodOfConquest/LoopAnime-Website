@@ -23,14 +23,14 @@ class AnimesAPIRepository extends EntityRepository
 
         $query = $this->createQueryBuilder('api')
                     ->select('a.id')
-                    ->join('api.anime','a');
+                    ->join('api.anime', 'a');
         
-        if(!$isAll) {
+        if (!$isAll) {
             $query->andWhere('a.status = :status')
                 ->setParameter('status', 'Continuing');
         }
 
-        if($anime) {
+        if ($anime) {
             $query->andWhere('a.id = :idAnime')
                 ->setParameter('idAnime', (int)$anime);
         }

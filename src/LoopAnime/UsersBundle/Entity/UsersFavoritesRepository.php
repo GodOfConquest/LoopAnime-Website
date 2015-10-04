@@ -23,7 +23,7 @@ class UsersFavoritesRepository extends EntityRepository
         $query = $this->createQueryBuilder("usersFavorites")
             ->select('COUNT(usersFavorites.id)')
             ->where("usersFavorites.idUser = :idUser")
-            ->setParameter('idUser',$idUser)
+            ->setParameter('idUser', $idUser)
             ->getQuery();
         return $query->getSingleScalarResult();
     }
@@ -32,19 +32,19 @@ class UsersFavoritesRepository extends EntityRepository
     {
         $idUser = $user->getId();
         $lastLogin = $user->getLastLogin();
-        if(empty($lastLogin)) {
+        if (empty($lastLogin)) {
             $lastLogin = $user->getCreateTime();
         }
 
         $query = $this->createQueryBuilder("usersFavorites")
             ->select('COUNT(usersFavorites.id)')
-            ->join("usersFavorites.anime",'animes')
-            ->join("animes.animesSeasons",'seasons')
-            ->join('seasons.animesEpisodes','episodes')
-            ->leftJoin('episodes.episodeViews','views')
+            ->join("usersFavorites.anime", 'animes')
+            ->join("animes.animesSeasons", 'seasons')
+            ->join('seasons.animesEpisodes', 'episodes')
+            ->leftJoin('episodes.episodeViews', 'views')
             ->where("views.idUser = :idUser")
-            ->andWhere("episodes.airDate BETWEEN '".$lastLogin->format('Y-m-d H:i:s')."' AND CURRENT_TIMESTAMP()")
-            ->setParameter('idUser',$idUser)
+            ->andWhere("episodes.airDate BETWEEN '" . $lastLogin->format('Y-m-d H:i:s') . "' AND CURRENT_TIMESTAMP()")
+            ->setParameter('idUser', $idUser)
             ->getQuery();
         return $query->getSingleScalarResult();
     }
@@ -54,13 +54,13 @@ class UsersFavoritesRepository extends EntityRepository
         $idUser = $user->getId();
         $query = $this->createQueryBuilder("usersFavorites")
             ->select('COUNT(usersFavorites.id)')
-            ->join("usersFavorites.anime",'animes')
-            ->join("animes.animesSeasons",'seasons')
-            ->join('seasons.animesEpisodes','episodes')
-            ->leftJoin('episodes.episodeViews','views')
+            ->join("usersFavorites.anime", 'animes')
+            ->join("animes.animesSeasons", 'seasons')
+            ->join('seasons.animesEpisodes', 'episodes')
+            ->leftJoin('episodes.episodeViews', 'views')
             ->where("views.idUser = :idUser")
             ->andWhere("(views.id IS NULL OR views.completed = 0)")
-            ->setParameter('idUser',$idUser)
+            ->setParameter('idUser', $idUser)
             ->getQuery();
         return $query->getSingleScalarResult();
     }
@@ -72,18 +72,18 @@ class UsersFavoritesRepository extends EntityRepository
      */
     public function isAnimeFavorite($user, $idAnime)
     {
-        if($user === null) {
+        if ($user === null) {
             return false;
         }
         $q = $this->createQueryBuilder('uf')
                 ->select('uf')
                 ->where('uf.idUser = :idUser')
                 ->andWhere('uf.idAnime = :idAnime')
-                ->setParameter('idUser',$user->getId())
-                ->setParameter('idAnime',$idAnime)
+                ->setParameter('idUser', $user->getId())
+                ->setParameter('idAnime', $idAnime)
                 ->getQuery()
                 ->getOneOrNullResult();
-        if($q !== null) {
+        if ($q !== null) {
             return true;
         }
         return false;
@@ -100,8 +100,8 @@ class UsersFavoritesRepository extends EntityRepository
                 ->select('uf')
                 ->where('uf.idAnime = :idAnime')
                 ->andWhere('uf.idUser = :idUser')
-                ->setParameter('idAnime',$idAnime)
-                ->setParameter('idUser',$idUser)
+                ->setParameter('idAnime', $idAnime)
+                ->setParameter('idUser', $idUser)
                 ->getQuery();
 
         return $q->getOneOrNullResult();
@@ -118,18 +118,18 @@ class UsersFavoritesRepository extends EntityRepository
         $results = $this->createQueryBuilder("users_favorites")
             ->select('users_favorites')
             ->addselect("animes")
-            ->join('users_favorites.anime','animes')
+            ->join('users_favorites.anime', 'animes')
             ->where('users_favorites.idUser = :idUser')
-            ->setParameter('idUser',$user->getId())
+            ->setParameter('idUser', $user->getId())
             ->groupBy('animes.id')
             ->getQuery()->getArrayResult();
 
-        foreach($results as &$result) {
+        foreach ($results as &$result) {
             /** @var Animes $anime */
             $anime = $this->getEntityManager()->getRepository('LoopAnimeShowsBundle:Animes')->find($result['anime']['id']);
             $result['tot_seasons'] = $seasonsRepo->getTotSeasons($anime);
             $result['tot_episodes'] = $episodesRepo->getTotEpisodes($anime);
-            $result['tot_seen'] = $viewsRepo->getTotViews($user,true,$result['anime']['id']);
+            $result['tot_seen'] = $viewsRepo->getTotViews($user, true, $result['anime']['id']);
             $result['anime'] = $anime;
         }
 
@@ -137,13 +137,13 @@ class UsersFavoritesRepository extends EntityRepository
     }
 
     public function setAnimeAsFavorite(Users $user, $idAnime) {
-        if(!empty($idAnime)) {
+        if (!empty($idAnime)) {
 
-            $favorite = $this->isAnimeFavorite($user,$idAnime);
+            $favorite = $this->isAnimeFavorite($user, $idAnime);
 
             // If is set remove -- else insert
-            if($favorite) {
-                $userFavorite = $this->getAnimeFavorite($idAnime,$user->getId());
+            if ($favorite) {
+                $userFavorite = $this->getAnimeFavorite($idAnime, $user->getId());
                 $this->_em->remove($userFavorite);
             } else {
 
@@ -166,14 +166,14 @@ class UsersFavoritesRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("uf")
                 ->select("uf")
-                ->join("uf.anime","a")
-                ->join("a.animesSeasons","ase")
-                ->join("ase.animesEpisodes","ae")
-                ->leftJoin('ae.episodeViews','views')
+                ->join("uf.anime", "a")
+                ->join("a.animesSeasons", "ase")
+                ->join("ase.animesEpisodes", "ae")
+                ->leftJoin('ae.episodeViews', 'views')
                 ->where('uf.idUser = :idUser')
-                ->setParameter('idUser',$user->getId());
+                ->setParameter('idUser', $user->getId());
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query->getQuery();
         } else {
             return $query->getQuery()->getResult();
@@ -184,13 +184,13 @@ class UsersFavoritesRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('uf')
                     ->select('uf')
-                    ->join('uf.anime','a')
+                    ->join('uf.anime', 'a')
                     ->where('a.id = :idAnime')
                     ->setParameter('idAnime', $idAnime->getId())
                     ->getQuery();
         try {
             return $query->getSingleScalarResult();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return 0;
         }
     }

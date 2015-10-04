@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/LoopTeam/LoopSeries-Website.png?label=ready&title=Ready)](https://waffle.io/LoopTeam/LoopSeries-Website)
 Loop Anime Project
 ========================
 ![sc-quality](https://scrutinizer-ci.com/g/LoopTeam/LoopAnime-Website/badges/quality-score.png?b=develop) ![sc-coverage](https://scrutinizer-ci.com/g/LoopTeam/LoopAnime-Website/badges/build.png?b=develop)

@@ -33,14 +33,14 @@ class TheTVDB {
     {
 
         // Try get the information about the anime
-        if(!$page_content = file_get_contents($this->makeLink(self::LINK_FULL_SHOW_INFO, $animeId)))
+        if (!$page_content = file_get_contents($this->makeLink(self::LINK_FULL_SHOW_INFO, $animeId)))
             throw new PageNotFoundException();
 
-        if($page_content == "")
+        if ($page_content == "")
             throw new ResponseEmptyException();
 
         // Parse the information returned
-        if(!($response_simple = simplexml_load_string($page_content,'SimpleXMLElement',LIBXML_NOCDATA)))
+        if (!($response_simple = simplexml_load_string($page_content, 'SimpleXMLElement', LIBXML_NOCDATA)))
             throw new PageCantBeParsedException();
 
         $responseSimpleXml = $response_simple->Series;
@@ -57,16 +57,16 @@ class TheTVDB {
             (string)$responseSimpleXml->Rating,
             (string)$responseSimpleXml->IMDB_ID,
             (string)$responseSimpleXml->RatingCount,
-            trim(str_replace("|",",",(string)$responseSimpleXml->Genre)," ,"),
+            trim(str_replace("|", ",", (string)$responseSimpleXml->Genre), " ,"),
             $animeId,
             ParserEnum::PARSER_TVDB
         );
 
         $seasons = [];
 
-        foreach($response_simple->Episode as $episode) {
+        foreach ($response_simple->Episode as $episode) {
 
-            if(!empty($seasons[(string)$episode->SeasonNumber])) {
+            if (!empty($seasons[(string)$episode->SeasonNumber])) {
                 $parserSeason = $seasons[(string)$episode->SeasonNumber];
             } else {
                 $seasons[(string)$episode->SeasonNumber] = $parserSeason = new ParserSeason((string)$episode->SeasonNumber, '');
@@ -74,7 +74,11 @@ class TheTVDB {
 
             $parserEpisode = new ParserEpisode();
             $parserEpisode->setEpisodeNumber((string)$episode->EpisodeNumber);
-            $parserEpisode->setEpisodeTitle((string)$episode->EpisodeName);
+            if (!empty($episode->EpisodeName)) {
+                $parserEpisode->setEpisodeTitle((string)$episode->EpisodeName);
+            } else {
+                $parserEpisode->setEpisodeTitle($parserAnime->getTitle());
+            }
             $parserEpisode->setPoster($this->downloadImage((string)$episode->filename));
             $parserEpisode->setRating((string)$episode->Rating);
             $parserEpisode->setViews(0);
@@ -83,12 +87,12 @@ class TheTVDB {
             $parserEpisode->setRatingCount((string)$episode->RatingCount);
             $parserEpisode->setSummary((string)$episode->Overview);
             $parserEpisode->setImdbId((string)$episode->IMDB_ID);
-            $parserEpisode->setAbsoluteNumber((string)$episode->absolute_number);
+            $parserEpisode->setAbsoluteNumber((int)$episode->absolute_number);
 
             $parserSeason->setEpisode($parserEpisode);
 
         }
-        foreach($seasons as $season) {
+        foreach ($seasons as $season) {
             $parserAnime->setSeason($season);
         }
 
@@ -102,14 +106,14 @@ class TheTVDB {
      */
     private function downloadImage($image) {
 
-        if($image == "")
+        if ($image == "")
             return "";
 
         // Construct the download link
         $download_link = $this->makeLink(self::LINK_IMAGES, "", $image);
 
         // Checks if the path already exists or create one
-        $path = dirname($this->rootDir) . "/web/img/episodes/thetvdb/". $image;
+        $path = dirname($this->rootDir) . "/web/img/episodes/thetvdb/" . $image;
         if (!file_exists(dirname($path))) {
             mkdir(dirname($path), 0777, true);
         }
@@ -118,12 +122,12 @@ class TheTVDB {
         $output = $path;
 
         // Check if the image as been already downloaded, download it if it wasnt
-        if(!file_exists($output))
+        if (!file_exists($output))
             file_put_contents($output, file_get_contents($download_link));
 
 
         // Construct a valid address for the img
-        $output = '/img/episodes/thetvdb/'. $image;
+        $output = '/img/episodes/thetvdb/' . $image;
 
         return $output;
     }
@@ -135,7 +139,7 @@ class TheTVDB {
      * @return string
      */
     private function makeLink($link, $animeKey, $filename = "") {
-        return str_replace(["{api_key}" , "{anime_key}", "{filename}"],[$this->apiKey,$animeKey,$filename], (string)$link);
+        return str_replace(["{api_key}", "{anime_key}", "{filename}"], [$this->apiKey, $animeKey, $filename], (string)$link);
     }
 }
 

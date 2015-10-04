@@ -16,7 +16,7 @@ class CreateInvitationCommand extends ContainerAwareCommand
         $this
             ->setName('loopanimeusersbundle:invitations:user:create')
             ->setDescription('Creates a new invitation code')
-            ->addArgument('email',InputArgument::REQUIRED,'Email to send the code')
+            ->addArgument('email', InputArgument::REQUIRED, 'Email to send the code')
             ->setHelp(
                 <<<EOT
                     The <info>%command.name%</info>command creates a new invitation code.
@@ -48,7 +48,7 @@ EOT
             $invitation = new Invitation();
         }
         $invitation->setEmail($email);
-        $output->writeln('<comment>New Code '.$invitation->getCode().' was generated for the follow email: ' . $email .'</comment>');
+        $output->writeln('<comment>New Code ' . $invitation->getCode() . ' was generated for the follow email: ' . $email . '</comment>');
 
         $entityManager->persist($invitation);
         $entityManager->flush();

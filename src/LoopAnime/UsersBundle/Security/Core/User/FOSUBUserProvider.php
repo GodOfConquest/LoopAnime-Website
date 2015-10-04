@@ -26,7 +26,7 @@ class FOSUBUserProvider extends BaseClass
      */
     public function __construct(UserManagerInterface $userManager, array $properties, EventDispatcherInterface $eventDispatcher)
     {
-        parent::__construct($userManager,$properties);
+        parent::__construct($userManager, $properties);
         $this->eventDispatcher = $eventDispatcher;
     }
 
@@ -35,7 +35,7 @@ class FOSUBUserProvider extends BaseClass
      */
     public function connect(UserInterface $user, UserResponseInterface $response)
     {
-        parent::connect($user,$response);
+        parent::connect($user, $response);
 
         $property = $this->getProperty($response);
         $username = $response->getUsername();
@@ -46,9 +46,9 @@ class FOSUBUserProvider extends BaseClass
         //on connect - get the access token and the user ID
         $service = $response->getResourceOwner()->getName();
 
-        $setter = 'set'.ucfirst($service);
-        $setter_id = $setter.'Id';
-        $setter_token = $setter.'AccessToken';
+        $setter = 'set' . ucfirst($service);
+        $setter_id = $setter . 'Id';
+        $setter_token = $setter . 'AccessToken';
 
         //we "disconnect" previously connected users
         if (null !== $previousUser = $this->userManager->findUserBy(array($property => $username))) {
@@ -70,9 +70,9 @@ class FOSUBUserProvider extends BaseClass
     public function loadUserByOAuthUserResponse(UserResponseInterface $response)
     {
         $service = $response->getResourceOwner()->getName();
-        $setter = 'set'.ucfirst($service);
-        $setter_id = $setter.'Id';
-        $setter_token = $setter.'AccessToken';
+        $setter = 'set' . ucfirst($service);
+        $setter_id = $setter . 'Id';
+        $setter_token = $setter . 'AccessToken';
 
         /** @var GoogleResourceOwner $resourceOwner */
         $resourceOwner = $response->getResourceOwner();
@@ -81,19 +81,19 @@ class FOSUBUserProvider extends BaseClass
         $createTime = new \DateTime("now");
         $country = "UK";
         $birthday = new \DateTime("now");
-        if(isset($responseData['birthday']))
+        if (isset($responseData['birthday']))
             $birthday = new \DateTime($responseData['birthday']);
 
-        switch($resourceOwner->getName()) {
+        switch ($resourceOwner->getName()) {
             case "google":
                 $avatar = $response->getProfilePicture();
-                if(!empty(explode("-",$responseData['locale'])[1]))
-                    $country = explode("-",$responseData['locale'])[1];
+                if (!empty(explode("-", $responseData['locale'])[1]))
+                    $country = explode("-", $responseData['locale'])[1];
                 break;
             case "facebook":
                 $avatar = $response->getProfilePicture();
-                if(!empty(explode("_",$responseData['locale'])[1]))
-                    $country = explode("_",$responseData['locale'])[1];
+                if (!empty(explode("_", $responseData['locale'])[1]))
+                    $country = explode("_", $responseData['locale'])[1];
                 break;
             default:
                 throw new ResourceOwnerUndeclaredException($resourceOwner->getName());
@@ -102,11 +102,11 @@ class FOSUBUserProvider extends BaseClass
         $username = $response->getUsername();
         /** @var Users $user */
         $user = $this->userManager->findUserBy(array($this->getProperty($response) => $username));
-        if(null === $user) {
+        if (null === $user) {
             $user = $this->userManager->findUserByEmail($response->getEmail());
         }
 
-        if(null === $user) {
+        if (null === $user) {
             $user = $this->userManager->createUser();
             $user->setUsername($response->getUsername());
             $user->setEmail($response->getEmail());
@@ -126,7 +126,7 @@ class FOSUBUserProvider extends BaseClass
 
         $user->$setter_id($username);
         $user->$setter_token($response->getAccessToken());
-        if(empty($user->getAvatar())) {
+        if (empty($user->getAvatar())) {
             $user->setAvatar($avatar);
         }
         $this->userManager->updateUser($user);

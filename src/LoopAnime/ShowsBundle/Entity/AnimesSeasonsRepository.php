@@ -32,11 +32,11 @@ class AnimesSeasonsRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('ase')
                 ->select('ase')
-                ->join('ase.anime','a')
+                ->join('ase.anime', 'a')
                 ->where('a.id = :idAnime')
-                ->setParameter('idAnime',$idAnime);
+                ->setParameter('idAnime', $idAnime);
 
-        if($getResults)
+        if ($getResults)
             return $query->getQuery()->getResult();
         else
             return $query->getQuery();
@@ -47,9 +47,9 @@ class AnimesSeasonsRepository extends EntityRepository
         $query = $this->createQueryBuilder('ase')
             ->select('ase')
             ->where('ase.id = :idSeason')
-            ->setParameter('idSeason',$idSeason->getId());
+            ->setParameter('idSeason', $idSeason->getId());
 
-        if($getResults)
+        if ($getResults)
             return $query->getQuery()->getSingleResult();
         else
             return $query->getQuery();
@@ -66,7 +66,7 @@ class AnimesSeasonsRepository extends EntityRepository
                 ->setParameter('season', $seasonToGet);
         try {
             return $query->getQuery()->getSingleResult();
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return null;
         }
     }

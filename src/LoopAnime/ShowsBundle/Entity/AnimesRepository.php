@@ -24,13 +24,13 @@ class AnimesRepository extends EntityRepository
     {
         $q = $this->createQueryBuilder('a')
                 ->select('a')
-                ->join('a.animesSeasons','ase')
-                ->join('ase.animesEpisodes','ae')
+                ->join('a.animesSeasons', 'ase')
+                ->join('ase.animesEpisodes', 'ae')
                 ->where('ae.id = :idEpisode')
-                ->setParameter('idEpisode',$idEpisode)
+                ->setParameter('idEpisode', $idEpisode)
                 ->getQuery();
 
-        if($getQuery)
+        if ($getQuery)
             return $q;
         else
             return $q->getOneOrNullResult();
@@ -48,11 +48,11 @@ class AnimesRepository extends EntityRepository
         $query = $this->createQueryBuilder("animes")
             ->select("animes")
             ->where('animes.title LIKE :title')
-            ->orderBy("animes.".$orderKey, $order)
-            ->setParameter("title", ''.$title.'%')
+            ->orderBy("animes." . $orderKey, $order)
+            ->setParameter("title", '' . $title . '%')
             ->getQuery();
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query;
         } else {
             return $query->getResult();
@@ -63,10 +63,10 @@ class AnimesRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("animes")
             ->select("animes")
-            ->orderBy("animes.startTime","DESC")
+            ->orderBy("animes.startTime", "DESC")
             ->getQuery();
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query;
         } else {
             return $query->getResult();
@@ -77,11 +77,11 @@ class AnimesRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("animes")
             ->select("animes")
-            ->orderBy("animes.ratingUp","DESC")
+            ->orderBy("animes.ratingUp", "DESC")
             ->addOrderBy("animes.ratingCount", "DESC")
             ->getQuery();
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query;
         } else {
             return $query->getResult();
@@ -95,7 +95,7 @@ class AnimesRepository extends EntityRepository
             ->distinct(true)
             ->getQuery();
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query;
         } else {
             return $query->getResult();
@@ -109,14 +109,14 @@ class AnimesRepository extends EntityRepository
             ->where("animes.genres LIKE :genre")
             ->andWhere('animes.genres IS NOT NULL')
             ->andWhere('animes.poster IS NOT NULL')
-            ->setParameter("genre",'%'.$genre.'%');
+            ->setParameter("genre", '%' . $genre . '%');
 
-        if($notIn !== "") {
+        if ($notIn !== "") {
             $query->andWhere("animes.id NOT IN(:notIn)")
-                ->setParameter("notIn",$notIn);
+                ->setParameter("notIn", $notIn);
         }
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query->getQuery();
         } else {
             return $query->getQuery()->getResult();
@@ -130,7 +130,7 @@ class AnimesRepository extends EntityRepository
     public function getTotSeen(Users $user, Animes $anime) {
         /** @var ViewsRepository $viewsRepo */
         $viewsRepo = $this->getEntityManager()->getRepository('LoopAnimeShowsBundle:Views');
-        return $viewsRepo->getTotViews($user,true,$anime);
+        return $viewsRepo->getTotViews($user, true, $anime);
     }
 
     public function getTotEpsiodes(Animes $anime) {
@@ -160,10 +160,11 @@ class AnimesRepository extends EntityRepository
 
         $session = new Session();
         $checksArr = $session->get('checks');
-        if (isset($checksArr['rating']['anime']))
-            $checkRatings = $checksArr['rating']['anime'];
-        else
-            $checkRatings = array();
+        if (isset($checksArr['rating']['anime'])) {
+                    $checkRatings = $checksArr['rating']['anime'];
+        } else {
+                    $checkRatings = array();
+        }
 
         // Check if there is a rate already
         if (isset($checkRatings[$idAnime])) {
@@ -177,10 +178,11 @@ class AnimesRepository extends EntityRepository
             }
         } else {
             $anime->setRatingCount($anime->getRatingCount() + 1);
-            if ($ratingUp)
-                $anime->setRatingUp($anime->getRatingUp() + 1);
-            else
-                $anime->setRatingDown($anime->getRatingDown() + 1);
+            if ($ratingUp) {
+                            $anime->setRatingUp($anime->getRatingUp() + 1);
+            } else {
+                            $anime->setRatingDown($anime->getRatingDown() + 1);
+            }
         }
 
         $this->_em->persist($anime);
@@ -188,7 +190,7 @@ class AnimesRepository extends EntityRepository
 
         // Sets on Session what pick he choose
         $checksArr['rating']['anime'][$idAnime] = ($ratingUp ? "up" : "down");
-        $session->set('checks',$checksArr);
+        $session->set('checks', $checksArr);
         return [
             "likes" => $anime->getRatingUp(),
             "dislikes" => $anime->getRatingDown()
@@ -199,8 +201,8 @@ class AnimesRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder('a')
             ->select('a')
-            ->orderBy('a.ratingCount','DESC')
-            ->addOrderBy('a.ratingUp','DESC')
+            ->orderBy('a.ratingCount', 'DESC')
+            ->addOrderBy('a.ratingUp', 'DESC')
             ->setMaxResults(4);
         return $query->getQuery()->getResult();
     }
@@ -210,7 +212,7 @@ class AnimesRepository extends EntityRepository
         $totComments = 0;
         try {
             $totComments = $this->_em->getRepository("LoopAnimeCommentsBundle:Comments")->getCommentsByAnime($idAnime, false)->getSingleScalarResult();
-        } catch(\Exception $e) {}
+        } catch (\Exception $e) {}
         $totFavorites = $this->_em->getRepository("LoopAnimeUsersBundle:UsersFavorites")->getTotalAnimeFavorites($idAnime);
         return ['totComments' => $totComments, 'totFavorites' => $totFavorites];
     }

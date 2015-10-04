@@ -24,12 +24,12 @@ class CommentsRepository extends EntityRepository
         $query = $this->createQueryBuilder("comments")
                     ->select("comments")
                     ->addSelect('u')
-                    ->join('comments.user','u')
+                    ->join('comments.user', 'u')
                     ->where("comments.episode = :idEpisode")
                     ->setParameter("idEpisode", $idEpisode)
                     ->getQuery();
 
-        if($getResults) {
+        if ($getResults) {
             return $query->getResult();
         } else {
             return $query;
@@ -44,7 +44,7 @@ class CommentsRepository extends EntityRepository
                     ->where("comments.user = :user")
                     ->setParameter("user", $user)
                     ->getQuery();
-        if($getResults) {
+        if ($getResults) {
             return $query->getResult();
         } else {
             return $query;
@@ -56,12 +56,12 @@ class CommentsRepository extends EntityRepository
         $query = $this->createQueryBuilder('comments')
                     ->select('comments')
                     ->where('a.id = :idAnime')
-                    ->join('comments.episode','ae')
-                    ->join('ae.season','ase')
+                    ->join('comments.episode', 'ae')
+                    ->join('ae.season', 'ase')
                     ->join('ase.anime', 'a')
                     ->setParameter('idAnime', $animes->getId())
                     ->getQuery();
-        if($getResults) {
+        if ($getResults) {
             return $query->getResult();
         } else {
             return $query;

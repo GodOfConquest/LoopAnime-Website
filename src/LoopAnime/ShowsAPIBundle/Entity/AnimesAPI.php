@@ -32,7 +32,7 @@ class AnimesAPI
     /**
      * @var integer
      *
-     * @ORM\Column(name="id_api", type="integer")
+     * @ORM\Column(name="id_api", type="string")
      * @ORM\ManyToMany(targetEntity="LoopAnime\ShowsAPIBundle\Entity\APIS", cascade={"remove"})
      * @ORM\JoinColumn(onDelete="CASCADE")
      */

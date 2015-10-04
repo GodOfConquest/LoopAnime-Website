@@ -12,7 +12,7 @@ class GenericResponse implements ResponseInterface
      */
     public function isError()
     {
-        if(count($this->errors) > 0) {
+        if (count($this->errors) > 0) {
             return true;
         }
         return false;
@@ -28,7 +28,7 @@ class GenericResponse implements ResponseInterface
             'isError' => $this->isError(),
             'payload' => $this->getPayLoad(),
         ];
-        if($asJson) {
+        if ($asJson) {
             $response = json_encode($response);
         }
         return $response;

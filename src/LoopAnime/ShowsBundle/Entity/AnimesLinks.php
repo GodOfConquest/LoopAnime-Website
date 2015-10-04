@@ -171,7 +171,7 @@ class AnimesLinks
      * Set hoster
      *
      * @param string $hoster
-     * @return Animes_Links
+     * @return AnimesLinks
      */
     public function setHoster($hoster)
     {

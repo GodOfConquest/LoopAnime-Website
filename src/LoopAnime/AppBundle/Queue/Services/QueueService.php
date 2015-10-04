@@ -7,7 +7,6 @@ use LoopAnime\AppBundle\Queue\Entity\Queue;
 use LoopAnime\AppBundle\Queue\Enum\QueueStatus;
 use LoopAnime\AppBundle\Queue\Enum\QueueType;
 use LoopAnime\AppBundle\Queue\Exception\InvalidQueueTyeException;
-use LoopAnime\AppBundle\Queue\Exception\WorkerDataMalformedException;
 use LoopAnime\AppBundle\Queue\Exception\WorkerNotDefinedException;
 use LoopAnime\AppBundle\Queue\Worker\WorkerFactory;
 use LoopAnime\AppBundle\Queue\Worker\WorkerInterface;
@@ -70,6 +69,16 @@ class QueueService
     public function setCompleted(Queue $job)
     {
         $job->setStatus(QueueStatus::COMPLETED);
+        $job->setCompleteTime(new \DateTime('now'));
+        $this->em->persist($job);
+        $this->em->flush($job);
+
+        return $job;
+    }
+
+    public function setProcessing(Queue $job)
+    {
+        $job->setStatus(QueueStatus::PROCESSING);
         $job->setProcessTime(new \DateTime('now'));
         $this->em->persist($job);
         $this->em->flush($job);
@@ -80,7 +89,7 @@ class QueueService
     public function setFailed(Queue $job)
     {
         $job->setStatus(QueueStatus::FAILED);
-        $job->setProcessTime(new \DateTime('now'));
+        $job->setCompleteTime(new \DateTime('now'));
         $this->em->persist($job);
         $this->em->flush($job);
 

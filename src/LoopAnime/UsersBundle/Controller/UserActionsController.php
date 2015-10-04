@@ -19,10 +19,10 @@ class UserActionsController extends Controller
     {
         /** @var Users $user */
         $user = $this->getUser();
-        $user = $this->getDoctrine()->getRepository('LoopAnime\UsersBundle\Entity\Users')->find($user->getId());;
+        $user = $this->getDoctrine()->getRepository('LoopAnime\UsersBundle\Entity\Users')->find($user->getId()); ;
         /** @var UsersPreferences $userPreferences */
         $userPreferences = $this->getDoctrine()->getRepository('LoopAnimeUsersBundle:UsersPreferences')->findOneBy(['iduser' => $user->getId()]);
-        if(!$userPreferences) {
+        if (!$userPreferences) {
             $userPreferences = new UsersPreferences($user);
         } else if ($request->get("showSpecials")) {
             $userPreferences->togglePreference("ShowSpecials");

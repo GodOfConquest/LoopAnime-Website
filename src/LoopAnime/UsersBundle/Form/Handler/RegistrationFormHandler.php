@@ -13,7 +13,6 @@ use LoopAnime\UsersBundle\UserEvents;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\FormInterface;
-use LoopAnime\UsersBundle\Entity\Countries;
 
 class RegistrationFormHandler extends BaseHandler {
 

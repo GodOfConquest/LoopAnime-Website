@@ -39,7 +39,7 @@ class AnimesEpisodes
     /**
      * @var string
      *
-     * @ORM\Column(name="episode_title", type="string", length=50)
+     * @ORM\Column(name="episode_title", type="string", length=250)
      */
     private $episodeTitle;
 

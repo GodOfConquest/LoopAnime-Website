@@ -17,7 +17,7 @@ class SearchController extends Controller
 
     public function searchFormAction(Request $request)
     {
-        return $this->redirect($this->generateUrl('loopanime_search_search',['term' => $request->get('term')]));
+        return $this->redirect($this->generateUrl('loopanime_search_search', ['term' => $request->get('term')]));
     }
 
     public function searchAction($term, Request $request)
@@ -51,11 +51,11 @@ class SearchController extends Controller
         );
 
         $userFavorites = [];
-        if($this->getUser() !== null) {
+        if ($this->getUser() !== null) {
             /** @var UsersFavoritesRepository $usersFavRepo */
             $usersFavRepo = $this->getDoctrine()->getRepository('LoopAnimeUsersBundle:UsersFavorites');
             $userFavorites = $usersFavRepo->getUsersFavoriteAnimes($this->getUser());
-            foreach($userFavorites as &$val) {
+            foreach ($userFavorites as &$val) {
                 $val = $val['idAnime'];
             }
         }

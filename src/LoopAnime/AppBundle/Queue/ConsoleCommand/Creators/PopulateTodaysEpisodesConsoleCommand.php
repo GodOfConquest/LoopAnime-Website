@@ -41,7 +41,7 @@ class PopulateTodaysEpisodesConsoleCommand extends ContainerAwareCommand
         $today = new \DateTime('now');
         $this->em = $this->getContainer()->get('doctrine');
 
-        if($inputInterface->hasOption('date') && !empty($inputInterface->getOption('date'))) {
+        if ($inputInterface->hasOption('date') && !empty($inputInterface->getOption('date'))) {
             $today = \DateTime::createFromFormat('Y-m-d', $inputInterface->getOption('date'));
         }
 

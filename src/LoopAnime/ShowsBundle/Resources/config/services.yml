@@ -1,6 +1,7 @@
 services:
     loopanime_video_service:
         class: LoopAnime\ShowsBundle\Services\VideoService
+        arguments: [@crawler.service]
 
     loopanime.episode.service:
         class: LoopAnime\ShowsBundle\Services\EpisodeService

@@ -91,4 +91,5 @@ security:
         - { path: ^/register, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: [ROLE_ADMIN, ROLE_SONATA_ADMIN] }
+        - { path: ^/api/, role: IS_AUTHENTICATED_FULLY }
         - { path: ^/, role: IS_AUTHENTICATED_REMEMBERED }

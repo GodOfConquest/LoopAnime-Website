@@ -16,20 +16,20 @@ class CategoriesController extends Controller
     {
         $genresResults = $this->getDoctrine()->getRepository('LoopAnime\ShowsBundle\Entity\Animes')->getGenres(false);
         $genres = [];
-        foreach($genresResults as $result) {
-            $genres = array_unique(array_merge($genres, explode(",",$result["genres"])));
+        foreach ($genresResults as $result) {
+            $genres = array_unique(array_merge($genres, explode(",", $result["genres"])));
         }
 
         $notIn = "0";
         $categories = [];
-        foreach($genres as $genre) {
-            if(empty($genre)) continue;
+        foreach ($genres as $genre) {
+            if (empty($genre)) continue;
 
             /** @var Animes $animesByGenres */
             $animesByGenres = $this->getDoctrine()->getRepository('LoopAnime\ShowsBundle\Entity\Animes')->getAnimesByGenres($genre, $notIn, false);
             $numAnimes = count($animesByGenres);
 
-            if($numAnimes > 0) {
+            if ($numAnimes > 0) {
                 $animes = $animesByGenres[0];
             } else {
                 /** @var Animes $animesByGenres */
@@ -56,7 +56,7 @@ class CategoriesController extends Controller
         $query = $animesRepo->getAnimesByGenres($category, "");
 
         /** @var SlidingPagination $animes */
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         $animes = $paginator->paginate(
             $query,
             $request->query->get('page', 1),

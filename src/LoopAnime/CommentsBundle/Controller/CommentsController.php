@@ -23,7 +23,7 @@ class CommentsController extends Controller
         $query = $commentsRepo->getCommentsByEpisode($episode, false);
 
         /** @var Paginator $paginator */
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         /** @var SlidingPagination $comments */
         $comments = $paginator->paginate(
             $query,
@@ -31,9 +31,9 @@ class CommentsController extends Controller
             $request->query->get('maxr', 10)
         );
 
-        if($request->getRequestFormat() === "json") {
+        if ($request->getRequestFormat() === "json") {
             $data = [];
-            foreach($comments as $comment) {
+            foreach ($comments as $comment) {
                 $data["payload"]["comments"][] = $this->convert2Array($comment);
             }
             return new JsonResponse($data);
@@ -44,7 +44,7 @@ class CommentsController extends Controller
     public function commentEpisodeAction(Request $request, AnimesEpisodes $episode)
     {
         $commentService = $this->get('comment.service');
-        if($commentService->commentEpisode($episode,$this->getUser(),$request->get('comment')))
+        if ($commentService->commentEpisode($episode, $this->getUser(), $request->get('comment')))
             return new JsonResponse(true);
         return new JsonResponse(false);
     }

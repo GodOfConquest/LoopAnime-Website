@@ -20,12 +20,12 @@ class WelcomeController extends Controller {
         /** @var NewsletterRepository $newsRepo */
         $newsRepo = $this->getDoctrine()->getRepository('LoopAnime\WelcomeBundle\Entity\Newsletter');
 
-        if(!$request->get('EMAIL')) {
+        if (!$request->get('EMAIL')) {
             return new JsonResponse(["result" => false, "msg"=>"Please submit a valid email!"]);
         }
 
         $record = $newsRepo->findOneBy(['email' => $request->get('EMAIL')]);
-        if($record === null) {
+        if ($record === null) {
             $newEntry = new Newsletter();
             $newEntry->setEmail($request->get('EMAIL'));
             $newEntry->setStatus('1');
@@ -35,7 +35,7 @@ class WelcomeController extends Controller {
             $em->flush();
             return new JsonResponse(["result" => true, "msg" => "Awesome! Soon you will be able to use our website, stay tunned!"]);
         }
-        return new JsonResponse(['result'=>false,"msg"=>"This email already exists, we will send you an invite as soon as possible!"]);
+        return new JsonResponse(['result'=>false, "msg"=>"This email already exists, we will send you an invite as soon as possible!"]);
     }
 
     public function contactAction(Request $request)

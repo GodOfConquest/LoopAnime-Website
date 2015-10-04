@@ -18,3 +18,4 @@ web/media/cache/
 web/img/avatar/*
 web/img/episodes/*
 vagrant/.vagrant
+vagrant/puphpet/files/dot/*

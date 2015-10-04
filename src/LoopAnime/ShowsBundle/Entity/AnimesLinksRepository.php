@@ -3,6 +3,7 @@
 namespace LoopAnime\ShowsBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
+use LoopAnime\AppBundle\Crawler\Hoster\HosterInterface;
 use LoopAnime\CrawlersBundle\Services\hosters\Hosters;
 
 /**
@@ -19,21 +20,21 @@ class AnimesLinksRepository extends EntityRepository
         $query = $this->createQueryBuilder('al')
             ->select('al')
             ->where('al.idEpisode = :idEpisode')
-            ->setParameter('idEpisode',$idEpisode)
+            ->setParameter('idEpisode', $idEpisode)
             ->getQuery();
 
-        if($getResults)
+        if ($getResults)
             return $query->getResult();
         else
             return $query;
     }
 
     /**
-     * @param Hosters $hoster
+     * @param HosterInterface $hoster
      * @param AnimesEpisodes $episode
      * @return integer|boolean
      */
-    public function removeLinks(Hosters $hoster, AnimesEpisodes $episode)
+    public function removeLinks(HosterInterface $hoster, AnimesEpisodes $episode)
     {
         $q = $this->_em
             ->createQuery('DELETE FROM LoopAnime\ShowsBundle\Entity\AnimesLinks al WHERE al.idEpisode = :idEpisode AND al.hoster = :hoster')

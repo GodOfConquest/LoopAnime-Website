@@ -2,7 +2,7 @@
 
 {% block jshead %}
     {{ parent() }}
-    <script type="text/javascript" src="//cdn.sublimevideo.net/js/gut6yssr.js"></script>
+    <script type="text/javascript" src="/js/sublime/js/gut6yssr.js"></script>
 {% endblock %}
 
 {% block body %}
@@ -28,15 +28,23 @@
         </div>
         <div class="col-sm-12 videoplayer video_player_content no-padding">
             <div class="col-xs-12 col-md-10 no-padding">
-                {% if initialLink is empty %}
+                {% if playlist is empty %}
                     <p class="text-center" style="padding-top: 20%">Sorry this episode doesn't have video yet!<br>
                         <strong>This episode is not yet ready to be displayed!</strong></p>
                 {% elseif isIframe %}
-                    <iframe src="{{ initialLink }}" style="border:0px; width: 620px; height: 300px;"></iframe>
+                    {% for quality, list in playlist %}
+                        {% for link in list %}
+                            <iframe src="{{ link }}" style="border:0px; width: 620px; height: 300px;"></iframe>
+                        {% endfor %}
+                    {% endfor %}
                 {% else %}
                     <video id="video1" class="sublime" width="620" height="300" data-uid="" preload="none" poster="{{ episode.poster }}"
                            data-sharing-image='poster' data-sharing-enable="true" data-sharing-url="{{ app.request.uri }}" data-sharing-title='Loop-Anime.com - Watch & Track anime online' data-sharing-text='I am watching {{ anime.title }} {{ episode.episodeTitle }} on Loop-Anime.com'>
-                        <source src="{{ initialLink }}" type="video/{{ links[selLink].fileType }}">
+                        {% for quality, list in playlist %}
+                            {% for link in list %}
+                                <source src="{{ link }}" type="video/{{ links[selLink].fileType }}" {% if quality == "hq" %}data-quality="hd"{% endif %}>
+                            {% endfor %}
+                        {% endfor %}
                     </video>
                 {% endif %}
             </div>
@@ -61,7 +69,7 @@
                 </div>
                 <div class="clearfix"></div><br/>
                 <div class="col-sm-12 clearfix{% if isIframe %}hidden{% endif %}">
-                    <a href="{{ initialLink }}" download="episode.{{ links[selLink].fileType }}" target="_blank">
+                    <a href="{% if playlist is not empty %}{{ playlist['dq'][0] }}{% endif %}" download="episode.{{ links[selLink].fileType }}" target="_blank">
                         <button class="btn btn-sm btn-info">
                             <i class="fa fa-download fa-2x"></i><br/>
                             Download
@@ -78,7 +86,9 @@
             &nbsp;|&nbsp; Mirrors:&nbsp;
             <select name="mirror" id="mirror_combo">
                 {% for key, link in links %}
-                    <option value="{{ key }}" {% if key == selLink %}selected="selected"{% endif %}>{{ link.hoster ~ " - " ~ link.fileServer }}</option>
+                    <option value="{{ key }}" {% if key == selLink %}selected="selected"{% endif %}>
+                        {{ link.hoster ~ " - " ~ link.fileServer }} {% if link.subtitles %}(Subbed: {{ link.subLang }}){% endif %}
+                    </option>
                 {% endfor %}
             </select>
         </div>

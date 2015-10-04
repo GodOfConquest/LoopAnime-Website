@@ -18,7 +18,7 @@ class EpisodeSeenListener
 
     public function onEpisodeSeen(EpisodeSeenEvent $event)
     {
-        $this->syncService->syncEpisodeSeen($event->getEpisode(),$event->getUser());
+        $this->syncService->syncEpisodeSeen($event->getEpisode(), $event->getUser());
     }
 
 }

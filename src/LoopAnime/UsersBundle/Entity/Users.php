@@ -379,24 +379,24 @@ class Users extends BaseUser
 
     public function getAvatarAbsolutePath()
     {
-        return $this->getAvatarUploadRootDir().'/'.$this->getAvatar();
+        return $this->getAvatarUploadRootDir() . '/' . $this->getAvatar();
     }
 
     public function getAvatarWebPath()
     {
         $avatar = $this->avatar;
-        if(empty($this->avatar)) {
+        if (empty($this->avatar)) {
             $avatar = 'img/defaults/avatar.jpg';
         }
-        if(stripos($avatar,"http") !== 0) {
-            $avatar = $this->getAvatarUploadDir().'/'.$this->getAvatar();;
+        if (stripos($avatar, "http") !== 0) {
+            $avatar = $this->getAvatarUploadDir() . '/' . $this->getAvatar(); ;
         }
         return $avatar;
     }
 
     public function getAvatarUploadRootDir()
     {
-        return __DIR__.'/../../../../web/'.$this->getAvatarUploadDir();
+        return __DIR__ . '/../../../../web/' . $this->getAvatarUploadDir();
     }
 
     public function getAvatarUploadDir()
@@ -464,7 +464,7 @@ class Users extends BaseUser
      */
     public function getUsernameWeb()
     {
-        return substr($this->username,0,15) . (strlen($this->username) > 15 ? '...' : '');
+        return substr($this->username, 0, 15) . (strlen($this->username) > 15 ? '...' : '');
     }
 
     /**
@@ -641,7 +641,7 @@ class Users extends BaseUser
 
         // set a random filename to the new avatar
         $fileExt = pathinfo($this->getAvatarFile()->getClientOriginalName(), PATHINFO_EXTENSION);
-        $fileName = $this->generateAvatarName().'.'.$fileExt;
+        $fileName = $this->generateAvatarName() . '.' . $fileExt;
 
         //
         // move takes the target directory and then the
@@ -652,7 +652,7 @@ class Users extends BaseUser
         );
 
         // remove old avatar file image if exists
-        if(!empty($this->avatar)) $this->removeAvatar($this->avatar);
+        if (!empty($this->avatar)) $this->removeAvatar($this->avatar);
         // set the filename with the name you've saved the file
         $this->avatar = $fileName;
 
@@ -665,13 +665,13 @@ class Users extends BaseUser
      */
     public function removeAvatar($file)
     {
-        $file_path = $this->getAvatarUploadRootDir().'/'.$file;
-        if(file_exists($file_path)) unlink($file_path);
+        $file_path = $this->getAvatarUploadRootDir() . '/' . $file;
+        if (file_exists($file_path)) unlink($file_path);
     }
 
     public function generateAvatarName()
     {
-        return substr( "abcdefghijklmnopqrstuvwxyz" ,mt_rand( 0 ,25 ) ,1 ) .substr( md5( time( ) ) ,1 );
+        return substr("abcdefghijklmnopqrstuvwxyz", mt_rand(0, 25), 1) . substr(md5(time( )), 1);
     }
 
 }

@@ -3,6 +3,7 @@
 namespace LoopAnime\ShowsBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use LoopAnime\AppBundle\Enum\TypeSerieEnum;
 use LoopAnime\ShowsBundle\Enum\AnimeStatus;
 
 /**
@@ -95,7 +96,7 @@ class Animes
     /**
      * @var integer
      *
-     * @ORM\Column(name="imdb_id", type="integer", nullable=true)
+     * @ORM\Column(name="imdb_id", type="string", nullable=true)
      */
     private $imdbId;
 
@@ -177,8 +178,8 @@ class Animes
         $this->poster = '';
         $this->lastUpdate = new \DateTime('now');
         $this->createTime = new \DateTime('now');
-        $this->typeSeries = 'anime';
-        $this->lastUpdated = new \DateTime('now');
+        $this->typeSeries = TypeSerieEnum::ANIME;
+        $this->lastUpdated = time();
         $this->imdbId = 0;
         $this->genres = 'TBA';
         $this->themes = 'TBA';
@@ -610,7 +611,7 @@ class Animes
 
     public function getRatingPercent()
     {
-        if(($this->getRatingUp() + $this->getRatingDown()) > 0) {
+        if (($this->getRatingUp() + $this->getRatingDown()) > 0) {
             return round(($this->getRatingUp() * 100) / ($this->getRatingUp() + $this->getRatingDown()));
         } else {
             return 0;

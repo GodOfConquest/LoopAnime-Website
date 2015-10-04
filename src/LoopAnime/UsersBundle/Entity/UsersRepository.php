@@ -18,11 +18,11 @@ class UsersRepository extends EntityRepository
     {
         $query = $this->createQueryBuilder("users")
             ->select("users")
-            ->orderBy('users.id','ASC')
+            ->orderBy('users.id', 'ASC')
             ->getQuery()
             ;
 
-        if($getQuery) {
+        if ($getQuery) {
             return $query;
         } else {
             return $query->getResult();
@@ -73,8 +73,8 @@ class UsersRepository extends EntityRepository
         $stats = [];
 
         $stats["tot_fav"]           = $this->getTotFav($user);
-        $stats["tot_seen"]          = $this->getTotViews($user,true);
-        $stats["tot_onProgress"]    = $this->getTotViews($user,false);
+        $stats["tot_seen"]          = $this->getTotViews($user, true);
+        $stats["tot_onProgress"]    = $this->getTotViews($user, false);
         $stats["tot_newEpisodes"]   = $this->getTrackNewEpisodes($user);
         $stats["tot_2see"]          = $this->getTrackToSeeEpisodes($user);
 

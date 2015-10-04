@@ -24,11 +24,11 @@ class ViewsRepository extends EntityRepository
             ->select('COUNT(views.id)')
             ->where("views.idUser = :idUser")
             ->andWhere("views.completed = :completed")
-            ->setParameter('idUser',$idUser)
-            ->setParameter('completed',$completed);
-        if(!empty($idAnime)) {
+            ->setParameter('idUser', $idUser)
+            ->setParameter('completed', $completed);
+        if (!empty($idAnime)) {
             $query->andWhere("views.idAnime = :idAnime")
-                ->setParameter("idAnime",$idAnime);
+                ->setParameter("idAnime", $idAnime);
         }
         $query = $query->getQuery();
         return $query->getSingleScalarResult();
@@ -41,17 +41,17 @@ class ViewsRepository extends EntityRepository
      */
     public function isEpisodeSeen($user, $idEpisode)
     {
-        if($user) {
+        if ($user) {
             $r = $this->createQueryBuilder('views')
                 ->select('views.id')
                 ->where('views.idUser = :idUser')
                 ->andWhere('views.idEpisode = :idEpisode')
                 ->andWhere('views.completed = 1')
-                ->setParameter('idUser',$user->getId())
-                ->setParameter('idEpisode',$idEpisode)
+                ->setParameter('idUser', $user->getId())
+                ->setParameter('idEpisode', $idEpisode)
                 ->getQuery()
                 ->getOneOrNullResult();
-            if($r !== null) {
+            if ($r !== null) {
                 return true;
             }
         }
@@ -64,7 +64,7 @@ class ViewsRepository extends EntityRepository
             $idEpisode = $episode;
             $episode = $this->getEntityManager()->getRepository('LoopAnimeShowsBundle:AnimesEpisodes')->find($episode);
             if (!$episode) {
-                throw new NotFoundHttpException('Episode with the id '.$idEpisode.' was not found!');
+                throw new NotFoundHttpException('Episode with the id ' . $idEpisode . ' was not found!');
             }
         }
 
@@ -106,7 +106,7 @@ class ViewsRepository extends EntityRepository
 
     /**
      * @param Users $user
-     * @param $idEpisode
+     * @param integer $idEpisode
      * @param integer|null $idLink
      * @return bool
      */
@@ -130,7 +130,7 @@ class ViewsRepository extends EntityRepository
         if (!empty($idEpisode) && !empty($idLink)) {
             $view = $this->getView($user, $idEpisode);
 
-            $view->setWatchedTime((int) $watchedTime);
+            $view->setWatchedTime((int)$watchedTime);
             $view->setViewTime(new \DateTime("now"));
 
             $this->_em->persist($view);
@@ -149,11 +149,11 @@ class ViewsRepository extends EntityRepository
      */
     public function getViewProgress(Users $user, $idEpisode)
     {
-        if(!empty($idEpisode)) {
+        if (!empty($idEpisode)) {
             /** @var Views $view */
             $view = $this->findOneBy(['idUser' => $user->getId(), 'idEpisode' => $idEpisode]);
 
-            if($view === null) {
+            if ($view === null) {
                 return false;
             } else {
                 return [
@@ -176,18 +176,18 @@ class ViewsRepository extends EntityRepository
         /** @var AnimesEpisodesRepository $animesEpisodesRepo */
         $animesEpisodesRepo = $this->getEntityManager()->getRepository('LoopAnime\ShowsBundle\Entity\AnimesEpisodes');
         /** @var AnimesSeasons[] $seasons */
-        $seasons = $animesSeasonsRepo->getSeasonsByAnime($animeObj->getId(),true);
-        foreach($seasons as $season) {
-            $episodes = $animesEpisodesRepo->getEpisodesBySeason($season->getId(),true);
-            foreach($episodes as $episode) {
+        $seasons = $animesSeasonsRepo->getSeasonsByAnime($animeObj->getId(), true);
+        foreach ($seasons as $season) {
+            $episodes = $animesEpisodesRepo->getEpisodesBySeason($season->getId(), true);
+            foreach ($episodes as $episode) {
                 /** @var AnimesEpisodes $episode */
                 $episode = $episode[0];
 
                 // If the absolute number is higher than the all watched episodes -- Stops all cycles
-                if($episode->getAbsoluteNumber() > $myWatchedEpisodes) {
+                if ($episode->getAbsoluteNumber() > $myWatchedEpisodes) {
                     break(2);
                 }
-                if(!$this->isEpisodeSeen($user, $episode->getId()))
+                if (!$this->isEpisodeSeen($user, $episode->getId()))
                     $this->setEpisodeAsSeen($user, $episode->getId(), 0);
             }
         }
@@ -199,7 +199,7 @@ class ViewsRepository extends EntityRepository
         $query = $this->createQueryBuilder('views')
                     ->select('views')
                     ->addSelect('ae')
-                    ->join('views.animeEpisodes','ae')
+                    ->join('views.animeEpisodes', 'ae')
                     ->where('views.idUser = :idUser')
                     ->andWhere('views.completed = 0')
                     ->setParameter('idUser', $user->getId())

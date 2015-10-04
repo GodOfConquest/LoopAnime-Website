@@ -61,28 +61,28 @@ class TraktTvHandler extends AbstractHandler {
         $viewsRepo = $this->em->getRepository('LoopAnime\ShowsBundle\Entity\Views');
 
         $return = $this->callCurl($this->getImportApiUrl(), null, $user);
-        foreach($return as $anime) {
-            if(empty($anime['show']['ids']['tvdb']))
+        foreach ($return as $anime) {
+            if (empty($anime['show']['ids']['tvdb']))
                 continue;
             /** @var AnimesAPI $animeObj */
             $allAnimes = $animeAPIRepo->findAll();
             $animeObj = $animeAPIRepo->findOneBy(['apiAnimeKey' => $anime['show']['ids']['tvdb']]);
-            if($animeObj) {
-                foreach($anime['seasons'] as $season) {
-                    foreach($season['episodes'] as $episode) {
+            if ($animeObj) {
+                foreach ($anime['seasons'] as $season) {
+                    foreach ($season['episodes'] as $episode) {
                         $seasonObj = $seasonsRepo->findOneBy(['anime' => $animeObj->getIdAnime(), 'season' => $season['number']]);
                         $episode = $episodeRepo->getEpisodesBySeason($seasonObj->getId(), true, $episode['number']);
-                        if(empty($episode))
+                        if (empty($episode))
                             continue;
 
                         $episode = $episode[0][0];
-                        if(!$viewsRepo->isEpisodeSeen($user, $episode->getId()))
+                        if (!$viewsRepo->isEpisodeSeen($user, $episode->getId()))
                             $viewsRepo->setEpisodeAsSeen($user, $episode->getId(), 0);
                     }
                 }
 
                 // Adds the anime to the favorite if its not
-                if(!$usersFavRepo->isAnimeFavorite($user,$animeObj->getIdAnime()))
+                if (!$usersFavRepo->isAnimeFavorite($user, $animeObj->getIdAnime()))
                     $usersFavRepo->setAnimeAsFavorite($user, $animeObj->getIdAnime());
             }
         }
@@ -97,23 +97,23 @@ class TraktTvHandler extends AbstractHandler {
             'trakt-api-version: 2',
             'trakt-api-key: ' . $this->apiKey
         ];
-        $ch = curl_init(self::SYNC_URL. $url);
+        $ch = curl_init(self::SYNC_URL . $url);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $header);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        if(!empty($POST)) {
+        if (!empty($POST)) {
             $POST = json_encode($POST);
             curl_setopt($ch, CURLOPT_POST, true);
             curl_setopt($ch, CURLOPT_POSTFIELDS, $POST);
         }
         $result = curl_exec($ch);
         $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        if($httpcode !== 200 && $httpcode !== 201) {
-            error_log("[Error][Trakt]".$url);
-            error_log("[Error][Trakt]".json_encode($header));
-            error_log("[Error][Trakt]".$result);
+        if ($httpcode !== 200 && $httpcode !== 201) {
+            error_log("[Error][Trakt]" . $url);
+            error_log("[Error][Trakt]" . json_encode($header));
+            error_log("[Error][Trakt]" . $result);
             throw new ApiFaultException("Trakt response header ", $httpcode . " Result: $result");
         }
-        $result = json_decode($result,true);
+        $result = json_decode($result, true);
         return $result;
     }
 

@@ -39,6 +39,7 @@ class AppKernel extends Kernel
             new Sonata\FormatterBundle\SonataFormatterBundle(),
             new Sonata\EasyExtendsBundle\SonataEasyExtendsBundle(),
             new Sonata\UserBundle\SonataUserBundle(),
+            new Nelmio\ApiDocBundle\NelmioApiDocBundle(),
 
             new LoopAnime\AppBundle\LoopAnimeAppBundle(),
             new LoopAnime\AdminBundle\LoopAnimeAdminBundle(),

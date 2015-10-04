@@ -25,7 +25,7 @@ class LinksController extends Controller
         }
 
         /** @var Paginator $paginator */
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         $links = $paginator->paginate(
             $query,
             $request->query->get('page', 1),

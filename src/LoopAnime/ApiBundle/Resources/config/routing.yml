@@ -1,19 +1,27 @@
 loopanime_api_v1_users:
     type: rest
     prefix: /v1
-    resource: LoopAnime\ApiBundle\Controller\UsersController
+    resource: LoopAnime\ApiBundle\Controller\UserController
+    defaults:
+        { _format: 'json'}
 
 loopanime_api_v1_episodes:
     type: rest
     prefix: /v1
-    resource: LoopAnime\ApiBundle\Controller\EpisodesController
+    resource: LoopAnime\ApiBundle\Controller\EpisodeController
+    defaults:
+        { _format: 'json'}
 
 loopanime_api_v1_animes:
     type: rest
     prefix: /v1
-    resource: LoopAnime\ApiBundle\Controller\AnimesController
+    resource: LoopAnime\ApiBundle\Controller\AnimeController
+    defaults:
+        { _format: 'json'}
 
 loopanime_api_v1_links:
     type: rest
     prefix: /v1
-    resource: LoopAnime\ApiBundle\Controller\LinksController
+    resource: LoopAnime\ApiBundle\Controller\LinkController
+    defaults:
+        { _format: 'json'}

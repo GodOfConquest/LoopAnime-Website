@@ -2,8 +2,8 @@
 
 namespace LoopAnime\AppBundle\Queue\Worker\Serie;
 
-use LoopAnime\AppBundle\Command\Anime\CreateAnime;
-use LoopAnime\AppBundle\Command\Anime\EditAnime;
+use LoopAnime\AppBundle\BusCommand\Anime\CreateAnime;
+use LoopAnime\AppBundle\BusCommand\Anime\EditAnime;
 use LoopAnime\AppBundle\Parser\Implementation\TheTVDB;
 use LoopAnime\AppBundle\Parser\ParserAnime;
 use LoopAnime\AppBundle\Queue\Enum\QueueType;

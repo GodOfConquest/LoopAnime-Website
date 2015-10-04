@@ -1,26 +1,33 @@
 services:
 
+    ### REPOS ###
+    loopanime.anime.crawler.repo:
+        class: Doctrine\Common\Persistence\ObjectRepository
+        factory_service: doctrine
+        factory_method: getRepository
+        arguments: ["LoopAnime\CrawlersBundle\Entity\AnimesCrawlers"]
+
     loopanime.parser.tvdb:
         class: LoopAnime\AppBundle\Parser\Implementation\TheTVDB
         arguments: [%tvdb_key%, %kernel.root_dir%]
 
     loopanime.commmand.createanime:
-        class: LoopAnime\AppBundle\Command\Anime\Handler\CreateAnimeCommandHandler
+        class: LoopAnime\AppBundle\BusCommand\Anime\Handler\CreateAnimeCommandHandler
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
-            - { name: command_handler, handles: LoopAnime\AppBundle\Command\Anime\CreateAnime }
+            - { name: command_handler, handles: LoopAnime\AppBundle\BusCommand\Anime\CreateAnime }
 
     loopanime.commmand.editanime:
-        class: LoopAnime\AppBundle\Command\Anime\Handler\EditAnimeCommandHandler
+        class: LoopAnime\AppBundle\BusCommand\Anime\Handler\EditAnimeCommandHandler
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
-            - { name: command_handler, handles: LoopAnime\AppBundle\Command\Anime\EditAnime }
+            - { name: command_handler, handles: LoopAnime\AppBundle\BusCommand\Anime\EditAnime }
 
     loopanime.commmand.createlink:
-        class: LoopAnime\AppBundle\Command\Anime\Handler\CreateLinkCommandHandler
+        class: LoopAnime\AppBundle\BusCommand\Anime\Handler\CreateLinkCommandHandler
         arguments: ["@doctrine.orm.entity_manager"]
         tags:
-            - { name: command_handler, handles: LoopAnime\AppBundle\Command\Anime\CreateLink }
+            - { name: command_handler, handles: LoopAnime\AppBundle\BusCommand\Anime\CreateLink }
 
     loopanime.sync.form.myanimelist:
         class: LoopAnime\AppBundle\Sync\Form\Type\MyAnimeListFormType
@@ -80,3 +87,30 @@ services:
         class: LoopAnime\AppBundle\Queue\ConsoleCommand\Creators\SyncEpisodesConsoleCommand
         tags:
             - { name: console.command }
+
+    ## CRAWLER ##
+    crawler.service:
+        class: LoopAnime\AppBundle\Crawler\Service\CrawlerService
+        arguments: [@doctrine.orm.entity_manager]
+
+    crawler.strategy.serie:
+        class: LoopAnime\AppBundle\Crawler\Strategy\SerieSearchStrategy
+        arguments: [@loopanime.anime.crawler.repo, @cache, @crawler.service]
+        tags:
+            - { name: crawler.strategy }
+
+    crawler.strategy.episode:
+        class: LoopAnime\AppBundle\Crawler\Strategy\EpisodeSearchStrategy
+        arguments: [@loopanime.anime.crawler.repo, @cache, @crawler.service]
+        tags:
+            - { name: crawler.strategy }
+
+    crawler.hoster.anitube:
+        class: LoopAnime\AppBundle\Crawler\Hoster\AnitubeHoster
+        tags:
+            - { name: crawler.hoster }
+
+    crawler.hoster.anime44:
+        class: LoopAnime\AppBundle\Crawler\Hoster\Anime44Hoster
+        tags:
+            - { name: crawler.hoster }

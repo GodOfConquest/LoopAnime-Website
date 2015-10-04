@@ -31,7 +31,7 @@ class AnimesController extends Controller
             $favorites[$anime->getId()] = $userFavRepo->isAnimeFavorite($this->getUser(), $anime->getId());
         }
         $query = $animesEpisodes->getRecentEpisodes(false);
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         $recentEpisodes = $paginator->paginate(
             $query,
             $request->query->get('page', 1),
@@ -53,18 +53,18 @@ class AnimesController extends Controller
         /** @var Animes[] $animes */
         $animes = $userFavorites->getUsersFavoriteAnimes($this->getUser(), false);
         $watchNext = [];
-        foreach($animes as $anime) {
+        foreach ($animes as $anime) {
             $idEpisode = null;
             /** @var Views $lastView */
-            $lastView = $viewsRepo->findOneBy(['idAnime' => $anime['idAnime'], 'completed' => 1],['idEpisode' => 'DESC']);
-            if(!$lastView) {
+            $lastView = $viewsRepo->findOneBy(['idAnime' => $anime['idAnime'], 'completed' => 1], ['idEpisode' => 'DESC']);
+            if (!$lastView) {
                 $nextEpisode = $episodesRepo->getEpisodesByAnime($anime['idAnime']);
-                if($nextEpisode)
+                if ($nextEpisode)
                     $nextEpisode = $nextEpisode[0];
             } else {
-                $nextEpisode = $episodesRepo->getNavigateEpisode($lastView->getIdEpisode(),true);
+                $nextEpisode = $episodesRepo->getNavigateEpisode($lastView->getIdEpisode(), true);
             }
-            if(!!$nextEpisode) {
+            if (!!$nextEpisode) {
                 $watchNext[] = ['anime' => $anime, 'episode' => $nextEpisode];
             }
         }
@@ -80,8 +80,8 @@ class AnimesController extends Controller
         $query = "";
 
         $type = "ordered";
-        if($request->get("type")) {
-            switch($request->get("type")) {
+        if ($request->get("type")) {
+            switch ($request->get("type")) {
                 case "mostrated":
                     $type = "mostrated";
                     $query = $animesRepo->getAnimesMostRated($this->getUser());
@@ -93,14 +93,14 @@ class AnimesController extends Controller
             }
         }
 
-        if($type === "ordered" && $request->get("title")) {
+        if ($type === "ordered" && $request->get("title")) {
             $query = $animesRepo->getAnimesByTitle($request->get("title"));
-        } elseif($type === "ordered") {
+        } elseif ($type === "ordered") {
             $query = $animesRepo->getAnimesByTitle("");
         }
 
         /** @var Animes[] $animes */
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         $animes = $paginator->paginate(
             $query,
             $request->query->get('page', 1),
@@ -108,11 +108,11 @@ class AnimesController extends Controller
         );
 
         $userFavorites = [];
-        if($this->getUser() !== null) {
+        if ($this->getUser() !== null) {
             /** @var UsersFavoritesRepository $usersFavRepo */
             $usersFavRepo = $this->getDoctrine()->getRepository('LoopAnimeUsersBundle:UsersFavorites');
             $userFavorites = $usersFavRepo->getUsersFavoriteAnimes($this->getUser());
-            foreach($userFavorites as &$val) {
+            foreach ($userFavorites as &$val) {
                 $val = $val['idAnime'];
             }
         }
@@ -143,24 +143,24 @@ class AnimesController extends Controller
         $url = $this->generateUrl('hwi_oauth_connect');
 
         /** @var Users $user */
-        if(!$user = $this->getUser()) {
+        if (!$user = $this->getUser()) {
             $renderData["title"] = "Error - Login Required";
             $renderData["msg"] = "You need to login to use this feature.";
             $renderData['closeButton'] = false;
-            $renderData["buttons"][] = array("text"=>"Close", "js"=>"onclick=".'"'."$('#myModal').remove();$('.modal-backdrop').remove()".'"', "class"=>"btn-primary");
-            $renderData["buttons"][] = array("text"=>"Login", "js"=>"onclick=".'"'."window.location='".$url.'"', "class"=>"btn-primary");
+            $renderData["buttons"][] = array("text"=>"Close", "js"=>"onclick=" . '"' . "$('#myModal').remove();$('.modal-backdrop').remove()" . '"', "class"=>"btn-primary");
+            $renderData["buttons"][] = array("text"=>"Login", "js"=>"onclick=" . '"' . "window.location='" . $url . '"', "class"=>"btn-primary");
         } else {
             $renderData = [];
 
-            switch($request->get('op')) {
+            switch ($request->get('op')) {
                 case "mark_favorite":
-                    if(empty($request->get("id_anime"))) {
+                    if (empty($request->get("id_anime"))) {
                         throw new \Exception("id_anime is a required parameter.");
                     }
                     /** @var UsersFavoritesRepository $usersRepo */
                     $usersRepo = $this->getDoctrine()->getRepository('LoopAnimeUsersBundle:UsersFavorites');
                     $renderData["title"] = "Operation - Mark as Favorite";
-                    if($usersRepo->setAnimeAsFavorite($this->getUser(), $request->get("id_anime"))) {
+                    if ($usersRepo->setAnimeAsFavorite($this->getUser(), $request->get("id_anime"))) {
                         $renderData["msg"] = "Anime was Marked/Dismarked as favorite.";
                     } else {
                         $renderData["msg"] = "Technical error - Please try again later.";
@@ -171,7 +171,7 @@ class AnimesController extends Controller
                     $ratingUp = ($request->get('ratingUp') ? true : false);
                     /** @var AnimesRepository $animesRepo */
                     $animesRepo = $this->getDoctrine()->getRepository('LoopAnime\ShowsBundle\Entity\Animes');
-                    if($data = $animesRepo->setRatingOnEpisode($user, $request->get("id_anime"), $request->get('ratingUp'))) {
+                    if ($data = $animesRepo->setRatingOnEpisode($user, $request->get("id_anime"), $request->get('ratingUp'))) {
                         $renderData["data"] = $data;
                         $renderData["msg"] = "Thank you for voting.";
                     } else {
@@ -186,7 +186,7 @@ class AnimesController extends Controller
 
         }
         $renderData['closeButton'] = false;
-        $renderData['buttons'][] = array("text"=>"Close", "js"=>"onclick=".'"'."$('#myModal').remove();$('.modal-backdrop').remove()".'"', "class"=>"btn-primary");
+        $renderData['buttons'][] = array("text"=>"Close", "js"=>"onclick=" . '"' . "$('#myModal').remove();$('.modal-backdrop').remove()" . '"', "class"=>"btn-primary");
         return new JsonResponse($renderData);
     }
 

@@ -50,7 +50,7 @@ class UserCPFormType extends AbstractType
                 'attr' => [],
                 'label_attr' => $commonLabelAttr,
             ))
-            ->add('buttonSubmit','submit',array(
+            ->add('buttonSubmit', 'submit', array(
                 'label' => 'Submit Changes',
                 'attr' => ['class' => 'btn btn-small btn-success']
             ))

@@ -20,7 +20,7 @@ class TraktTvFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('buttonSync','submit',array(
+            ->add('buttonSync', 'submit', array(
                 'label' => 'Sync Trakt',
                 'attr' => ['class' => 'btn btn-small btn-success']
             ));

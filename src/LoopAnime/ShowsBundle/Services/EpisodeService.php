@@ -38,7 +38,7 @@ class EpisodeService extends AbstractService
     public function markEpisodeAsSeen(AnimesEpisodes $episode, AnimesLinks $link = null)
     {
         $idLink = $link ? $link->getId() : null;
-        if($this->viewsRepo->setEpisodeAsSeen($this->user, $episode->getId(), $idLink)) {
+        if ($this->viewsRepo->setEpisodeAsSeen($this->user, $episode->getId(), $idLink)) {
             $event = new EpisodeSeenEvent($this->user, $episode, $link);
             $this->eventDispatcher->dispatch(ShowEvents::EPISODE_SEEN, $event);
             return true;
@@ -49,7 +49,7 @@ class EpisodeService extends AbstractService
     public function markEpisodeAsUnseen(AnimesEpisodes $episode, AnimesLinks $link = null)
     {
         $idLink = $link ? $link->getId() : null;
-        if($this->viewsRepo->setEpisodeAsUnseen($this->user, $episode->getId(), $idLink)) {
+        if ($this->viewsRepo->setEpisodeAsUnseen($this->user, $episode->getId(), $idLink)) {
             $event = new EpisodeSeenEvent($this->user, $episode, $link);
             $this->eventDispatcher->dispatch(ShowEvents::EPISODE_SEEN, $event);
             return true;
@@ -59,7 +59,7 @@ class EpisodeService extends AbstractService
 
     public function rateEpisode(AnimesEpisodes $episode, $ratingUp)
     {
-        if($this->episodeRepo->setRatingOnEpisode($episode, $ratingUp)) {
+        if ($this->episodeRepo->setRatingOnEpisode($episode, $ratingUp)) {
             return true;
         }
         return false;

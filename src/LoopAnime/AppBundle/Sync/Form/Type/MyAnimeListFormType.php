@@ -35,7 +35,7 @@ class MyAnimeListFormType extends AbstractType
                     'label_attr' => $commonLabelAttr,
                     'attr' => ['class' => 'form-control input-small']
                 ))
-            ->add('buttonSync','submit',array(
+            ->add('buttonSync', 'submit', array(
                 'label' => 'Sync MAL',
                 'attr' => ['class' => 'btn btn-small btn-success']
             ));

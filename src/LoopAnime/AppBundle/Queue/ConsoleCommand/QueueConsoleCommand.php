@@ -23,13 +23,14 @@ class QueueConsoleCommand extends ContainerAwareCommand
     private $em;
     /** @var QueueRepository */
     private $queueRepo;
+    private $maxjobs;
 
     public function configure()
     {
         $this
             ->setName('la:queue:server-run')
             ->setDescription('Run the queue management server')
-            ->addOption('interval', 'i', InputOption::VALUE_REQUIRED, 'Interval', 10)
+            ->addOption('maxjobs', null, InputOption::VALUE_REQUIRED, 'Max of Jobs that is possible to run at same time', 5)
         ;
     }
 
@@ -38,12 +39,16 @@ class QueueConsoleCommand extends ContainerAwareCommand
         $this->input = $inputInterface;
         $this->output = $outputInterface;
         $this->startTime = new \DateTime('now');
+        $this->maxjobs = !empty($this->input->getOption('maxjobs')) ? $this->input->getOption('maxjobs') : 5;
+
         $this->em = $this->getContainer()->get('doctrine');
         $this->queueRepo = $this->em->getRepository('LoopAnime\AppBundle\Queue\Entity\Queue');
 
-        while(true) {
+        if ($this->canRun()) {
+            $this->output->writeln('Queue Server - booting');
             $this->runServer();
-            sleep($this->input->getOption('interval'));
+        } else {
+            $this->output->writeln('Queue Server - cant run at this time, there are jobs being processed');
         }
     }
 
@@ -52,14 +57,15 @@ class QueueConsoleCommand extends ContainerAwareCommand
         $workerFactory = $this->getWorkerFactory();
         /** @var QueueService $queueService */
         $queueService = $this->getContainer()->get('queue.service');
-        $jobs = $this->queueRepo->getPendingJobs(100);
+        $jobs = $this->queueRepo->getPendingJobs(5);
         if ($jobs) {
             $this->output->writeln('Found ' . count($jobs) . '.. Start seting it to the workers.');
             foreach ($jobs as $job) {
                 try {
-                    $this->output->writeln(sprintf('Creating and setting a %s worker for the job with the id %s', $job->getType() , $job->getId()));
+                    $this->output->writeln(sprintf('Creating and setting a %s worker for the job with the id %s', $job->getType(), $job->getId()));
                     $worker = $workerFactory->create($job);
                     $worker->validate();
+                    $queueService->setProcessing($job);
                     if ($worker->runWorker() === true) {
                         $this->output->writeln(sprintf('Job run without any problem marked as success!'));
                         $queueService->setCompleted($job);
@@ -69,7 +75,7 @@ class QueueConsoleCommand extends ContainerAwareCommand
                     }
 
                     $this->output->writeln('<info>Worker has finished the job!</info>');
-                } catch(\Exception $e) {
+                } catch (\Exception $e) {
                     $this->output->writeln(sprintf('Job run with problems set as failed!'));
                     $queueService->setFailed($job);
                     $this->output->writeln('Error: ' . $e->getMessage());
@@ -95,14 +101,24 @@ class QueueConsoleCommand extends ContainerAwareCommand
     private function deleteOld()
     {
         $validatePast = $this->startTime->add(new \DateInterval('P3D'));
-        $nowDate = new \DateTime('now');
 
         if ($validatePast < $this->startTime) {
             $this->output->writeln('<info>Removing old entries on the queue</info>');
-            $q = $this->em->createQuery('DELETE FROM LoopAnimeAppBundle\Queue\Entity\Queue q where q.createTime < ' . $validatePast->format('Y-m-d'));
+            $q = $this->em->createQuery('DELETE FROM LoopAnimeAppBundle\Queue\Entity\Queue q where q.createTime <= :date')
+                ->setParameter('date', $validatePast->format('Y-m-d'));
             $numDeleted = $q->execute();
             $this->output->writeln(sprintf('<info>%s Deleted successfully!</info>', $numDeleted));
         }
+    }
+
+    public function canRun()
+    {
+        $jobs = $this->queueRepo->getProcessingJobs();
+        if (count($jobs) >= $this->maxjobs) {
+            return false;
+        }
+
+        return true;
     }
 
 }

@@ -19,13 +19,13 @@ class SyncService
     public function syncEpisodeSeen(AnimesEpisodes $episode, Users $user)
     {
         try {
-            if(!empty($user->getTraktAccessToken())) {
+            if (!empty($user->getTraktAccessToken())) {
                 $this->getHandler(SyncEnum::SYNC_TRAKT)->markAsSeenEpisode($episode, $user);
             }
-            if(!empty($user->getMALUsername())) {
+            if (!empty($user->getMALUsername())) {
                 $this->getHandler(SyncEnum::SYNC_TRAKT)->markAsSeenEpisode($episode, $user);
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
         return true;
@@ -33,10 +33,10 @@ class SyncService
 
     public function setHandler(AbstractHandler $handler)
     {
-        if(empty($handler->getName())) {
+        if (empty($handler->getName())) {
             throw new HandlerWithoutName($handler);
         }
-        if(isset($this->handler[$handler->getName()])) {
+        if (isset($this->handler[$handler->getName()])) {
             throw new HandlerWithDuplicatedName($handler);
         }
         $this->handler[$handler->getName()] = $handler;

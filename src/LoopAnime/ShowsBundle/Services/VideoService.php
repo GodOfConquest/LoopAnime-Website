@@ -2,7 +2,7 @@
 
 namespace LoopAnime\ShowsBundle\Services;
 
-use LoopAnime\CrawlersBundle\Services\hosters\Hosters;
+use LoopAnime\AppBundle\Crawler\Service\CrawlerService;
 use LoopAnime\ShowsBundle\Entity\AnimesLinks;
 
 class VideoService
@@ -12,17 +12,20 @@ class VideoService
     private $lq;
     private $dq;
 
+    public function __construct(CrawlerService $crawlerService)
+    {
+        $this->crawlerService = $crawlerService;
+    }
+
     public function getDirectVideoLink(AnimesLinks $link)
     {
-        $hoster = "LoopAnime\\CrawlersBundle\\Services\\hosters\\".explode("-",ucfirst(strtolower($link->getHoster())))[0];
-        /** @var Hosters $hoster */
-        $hoster = new $hoster();
-
-        if($link = $hoster->getEpisodeDirectLink($link->getLink())) {
-            return urldecode($link);
-        } else {
-            return false;
+        $hoster = $this->crawlerService->getHoster($link->getHoster());
+        if ($hoster->isIframe()) {
+            return [];
         }
+        $hoster->getDirectLinks($link->getLink());
+
+        return $hoster->getDirectLinks($link->getLink());
     }
 
     public function getHQVideoLink()
@@ -32,7 +35,7 @@ class VideoService
 
     public function hasHQVideoLink()
     {
-        if(!empty($this->hq)) {
+        if (!empty($this->hq)) {
             return true;
         } else {
             return false;
@@ -53,17 +56,17 @@ class VideoService
     {
         $link = $link->getLink();
         $link = parse_url($link);
-        $query = explode("&",$link['query']);
-        foreach($query as &$fragment) {
-            list($key, $value) = explode("=",$fragment);
-            if($key === "w" || $key === "width") {
-                $fragment = $key ."=550px";
+        $query = !empty($link['query']) ? explode("&", $link['query']) : [];
+        foreach ($query as &$fragment) {
+            list($key, $value) = explode("=", $fragment);
+            if ($key === "w" || $key === "width") {
+                $fragment = $key . "=550px";
             }
-            if($key === "h" || $key === "height") {
-                $fragment = $key .'=300px';
+            if ($key === "h" || $key === "height") {
+                $fragment = $key . '=300px';
             }
         }
-        return $link['scheme'] . "://" . $link['host'] . "/" . $link['path'] .'?'. implode("&",$query);
+        return $link['scheme'] . "://" . $link['host'] . $link['path'] . '?' . implode("&", $query);
     }
 
 }

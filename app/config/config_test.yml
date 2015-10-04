@@ -21,7 +21,7 @@ swiftmailer:
 # FLUSH PRIVILEGES;
 doctrine:
     dbal:
-        host:     localhost
-        dbname:   testdb
-        user:     testdb
-        password: testdb
+        host:     localhost:3306
+        dbname:   loopanime-mvc-bck
+        user:     root
+        password: 123

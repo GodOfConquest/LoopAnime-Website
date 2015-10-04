@@ -25,7 +25,7 @@ class MyAnimeListHandler extends AbstractHandler {
             "password" => $user->getMALPassword(),
             "tvdb_id"  => $animeAPI->getApiAnimeKey(),
             "title"    => $anime->getTitle(),
-            "year"     => date("Y",strtotime($anime->getStartTime())),
+            "year"     => date("Y", strtotime($anime->getStartTime())),
             "episodes" => [
                 "season" => $season->getSeason(),
                 "episode" => $episode->getEpisode(),
@@ -44,15 +44,15 @@ class MyAnimeListHandler extends AbstractHandler {
         $usersFavRepo = $this->em->getRepository('LoopAnime\UsersBundle\Entity\UsersFavorites');
 
         $return = $this->callCurl($this->getImportApiUrl(), null, $user);
-        foreach($return->anime as $anime) {
+        foreach ($return->anime as $anime) {
             /** @var Animes $animeObj */
             $animeObj = $animesRepo->findOneBy(['title' => $anime->series_title]);
-            if($animeObj !== null) {
+            if ($animeObj !== null) {
                 $myWatchedEpisodes = $anime->my_watched_episodes;
                 $this->em->getRepository('LoopAnime\ShowsBundle\Entity\Views')->setEpisodesAsSeenBulk($myWatchedEpisodes, $user, $animeObj);
 
                 // Adds the anime to the favorite if its not
-                if(!$usersFavRepo->isAnimeFavorite($user,$animeObj->getId()))
+                if (!$usersFavRepo->isAnimeFavorite($user, $animeObj->getId()))
                     $usersFavRepo->setAnimeAsFavorite($user, $animeObj->getId());
             }
         }
@@ -70,12 +70,12 @@ class MyAnimeListHandler extends AbstractHandler {
     {
         $url = $this->prepareLink($url, $user);
         $ch = curl_init(self::SYNC_URL . $url);
-        curl_setopt($ch, CURLOPT_USERPWD, $user->getMALUsername().":".$user->getMALPassword());
+        curl_setopt($ch, CURLOPT_USERPWD, $user->getMALUsername() . ":" . $user->getMALPassword());
         curl_setopt($ch, CURLOPT_USERAGENT, $this->apiKey);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_ANY);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
-        if(!empty($POST)) {
+        if (!empty($POST)) {
             $POST = json_encode($POST);
             curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "POST");
             curl_setopt($ch, CURLOPT_POSTFIELDS, $POST);
@@ -86,7 +86,7 @@ class MyAnimeListHandler extends AbstractHandler {
         }
         $result = curl_exec($ch);
         $resultStatus = curl_getinfo($ch);
-        if(empty($resultStatus['http_code']) || $resultStatus['http_code'] != "200" || $result === "Invalid credentials")
+        if (empty($resultStatus['http_code']) || $resultStatus['http_code'] != "200" || $result === "Invalid credentials")
             throw new ApiFaultException('MyAnimeList', $result);
 
         $result = simplexml_load_string($result);
@@ -98,7 +98,7 @@ class MyAnimeListHandler extends AbstractHandler {
 
     private function prepareLink($link, Users $user)
     {
-        return str_replace('|username|',$user->getMALUsername(),$link);
+        return str_replace('|username|', $user->getMALUsername(), $link);
     }
 
     protected function getMarkEpisodeSeenApiUrl()

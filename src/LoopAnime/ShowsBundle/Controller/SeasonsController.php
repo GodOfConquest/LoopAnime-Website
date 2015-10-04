@@ -21,7 +21,7 @@ class SeasonsController extends Controller
         $seasons = $seasonsRepo->getSeasonById($idSeason, false);
 
         /** @var $paginator $seasons */
-        $paginator  = $this->get('knp_paginator');
+        $paginator = $this->get('knp_paginator');
         /** @var AnimesSeasons[] $seasons */
         $seasons = $paginator->paginate(
             $seasons,
@@ -29,13 +29,13 @@ class SeasonsController extends Controller
             $request->query->get('maxr', 10)
         );
 
-        if($request->getRequestFormat() === "html") {
+        if ($request->getRequestFormat() === "html") {
             /** @var AnimesSeasons $season */
             $season = $seasons->getItems()[0];
             /** @var Animes $anime */
             $anime = $this->getDoctrine()->getRepository('LoopAnime\ShowsBundle\Entity\Animes')->find($season->getAnime());
-        } elseif($request->getRequestFormat() === "json") {
-            foreach($seasons as $season) {
+        } elseif ($request->getRequestFormat() === "json") {
+            foreach ($seasons as $season) {
                 $data["payload"]["seasons"][] = $season->convert2Array();
             }
 

@@ -8,6 +8,6 @@ class HandlerNotFound extends \Exception
 
     public function __construct($handler)
     {
-        parent::__construct(sprintf($this->message,$handler));
+        parent::__construct(sprintf($this->message, $handler));
     }
 }

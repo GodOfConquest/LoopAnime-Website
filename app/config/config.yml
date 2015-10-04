@@ -161,3 +161,9 @@ fos_oauth_server:
 command_bus:
     # default value for this key is "class_based"
     command_name_resolver_strategy: class_based
+
+services:
+    cache:
+        class: Doctrine\Common\Cache\ApcCache
+
+nelmio_api_doc: ~

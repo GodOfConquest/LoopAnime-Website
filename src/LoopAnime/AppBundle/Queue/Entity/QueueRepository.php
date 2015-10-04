@@ -23,4 +23,14 @@ class QueueRepository extends BaseRepository
         ;
         return $query->getQuery()->execute();
     }
+
+    public function getProcessingJobs()
+    {
+        $query = $this->createQueryBuilder('q')
+            ->select('q')
+            ->where('q.status = :st')
+            ->setParameter('st', QueueStatus::PROCESSING);
+        ;
+        return $query->getQuery()->execute();
+    }
 }

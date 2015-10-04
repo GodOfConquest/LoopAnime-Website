@@ -5,8 +5,8 @@ namespace LoopAnime\AdminBundle\Command;
 use LoopAnime\AppBundle\Parser\Implementation\TheTVDB;
 use LoopAnime\AppBundle\Parser\ParserAnime;
 use LoopAnime\ShowsAPIBundle\Entity\AnimesAPI;
-use LoopAnime\AppBundle\Command\Anime\CreateAnime;
-use LoopAnime\AppBundle\Command\Anime\EditAnime;
+use LoopAnime\AppBundle\BusCommand\Anime\CreateAnime;
+use LoopAnime\AppBundle\BusCommand\Anime\EditAnime;
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -22,7 +22,7 @@ class AddAnimeCommand extends ContainerAwareCommand {
         $this
             ->setName('loopanime:admin:import:add-anime')
             ->setDescription('Adds one anime to the database')
-            ->addArgument('tvdbId',InputArgument::REQUIRED,'TVDB ID',null);
+            ->addArgument('tvdbId', InputArgument::REQUIRED, 'TVDB ID', null);
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

@@ -19,8 +19,9 @@ class UserCPController extends Controller
         /** @var Users $user */
         $user = $this->getUser();
 
-        if (empty($user))
-            throw $this->createNotFoundException("User not found!");
+        if (empty($user)) {
+                    throw $this->createNotFoundException("User not found!");
+        }
 
         $form = $this->createForm(new UserCPFormType($this->getDoctrine()->getManager()), $user);
         $form->handleRequest($request);
@@ -54,7 +55,7 @@ class UserCPController extends Controller
                 if ($syncService->checkIfUserExists($user, SyncEnum::SYNC_TRAKT)) {
                     $syncService->importSeenEpisodes(SyncEnum::SYNC_TRAKT);
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->get('session')->getFlashBag()->add(
                     'error',
                     $e->getMessage()
@@ -64,17 +65,17 @@ class UserCPController extends Controller
 
         $syncMalForm = $this->createForm('loopanime_sync_form_myanimelist');
         $syncMalForm->handleRequest($request);
-        if($syncMalForm->isSubmitted() && $syncMalForm->isValid()) {
+        if ($syncMalForm->isSubmitted() && $syncMalForm->isValid()) {
             $data = $syncMalForm->getData();
             $user->setMALUsername($data['username']);
             $user->setMALPassword($data['password']);
             try {
-                if($syncService->checkIfUserExists($user, SyncEnum::SYNC_MAL)) {
+                if ($syncService->checkIfUserExists($user, SyncEnum::SYNC_MAL)) {
                     $this->getDoctrine()->getManager()->persist($user);
                     $this->getDoctrine()->getManager()->flush();
                     $syncService->importSeenEpisodes(SyncEnum::SYNC_MAL);
                 }
-            } catch(\Exception $e) {
+            } catch (\Exception $e) {
                 $this->get('session')->getFlashBag()->add(
                     'error',
                     $e->getMessage()

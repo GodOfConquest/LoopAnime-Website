@@ -52,6 +52,13 @@ class Queue
     private $processTime;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(name="complete_time", type="datetime", nullable=true)
+     */
+    private $completeTime;
+
+    /**
      * @var array
      *
      * @ORM\Column(name="data", type="array", length=900)
@@ -148,6 +155,21 @@ class Queue
     public function getData()
     {
         return $this->data;
+    }
+
+    /**
+     * @param \DateTime $param
+     */
+    public function setCompleteTime($param)
+    {
+        $this->completeTime = $param;
+    }
+
+    public function resetQueue()
+    {
+        $this->processTime = null;
+        $this->completeTime = null;
+        $this->status = QueueStatus::PENDING;
     }
 
 }
